@@ -1,0 +1,64 @@
+name: Build Fan House Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Unity 6.3 Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild project bundle
+        shell: bash
+        run: |
+          cat .fanhouse_bundle/part*.b64 > /tmp/fanhouse.b64
+          base64 --decode /tmp/fanhouse.b64 > /tmp/FanHouse3D_Unity6_GitHubBuild.zip
+          unzip -q -o /tmp/FanHouse3D_Unity6_GitHubBuild.zip -d .
+          test -f FanHouse3D_Unity/ProjectSettings/ProjectVersion.txt
+          test -f FanHouse3D_Unity/Assets/FanHouse3D/Editor/FanHouseCIBuild.cs
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: FanHouse3D_Unity/Library
+          key: fanhouse-unity-6000.3.24f1-android-${{ hashFiles('.fanhouse_bundle/**') }}
+          restore-keys: |
+            fanhouse-unity-6000.3.24f1-android-
+
+      - name: Build Android APK
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: FanHouse3D_Unity
+          unityVersion: 6000.3.24f1
+          targetPlatform: Android
+          buildMethod: FanHouse3D.EditorTools.FanHouseCIBuild.BuildAndroidApk
+
+      - name: Upload APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: FanHouse3D-Android-APK
+          path: |
+            **/FanHouse3D.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: FanHouse3D-Unity-Logs
+          path: |
+            **/*.log
+            **/Editor.log
+          if-no-files-found: ignore
+          retention-days: 7
