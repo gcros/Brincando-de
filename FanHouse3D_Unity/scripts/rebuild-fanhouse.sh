@@ -20,7 +20,12 @@ base64 --decode "$B64_FILE" > "$ZIP_FILE"
 
 rm -rf "$TMP_DIR"
 mkdir -p "$TMP_DIR"
-unzip -q -o "$ZIP_FILE" -d "$TMP_DIR"
+
+ZIP_WIN="$(cygpath -w "$ZIP_FILE")"
+TMP_WIN="$(cygpath -w "$TMP_DIR")"
+
+echo "Extracting bundle with Windows PowerShell..."
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Expand-Archive -LiteralPath '$ZIP_WIN' -DestinationPath '$TMP_WIN' -Force"
 
 test -f "$TMP_DIR/FanHouse3D_Unity/Assets/FanHouse3D/Editor/FanHouseSceneBuilder.cs"
 test -f "$TMP_DIR/FanHouse3D_Unity/Assets/FanHouse3D/Editor/FanHouseCIBuild.cs"
