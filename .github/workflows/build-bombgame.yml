@@ -241,6 +241,12 @@ jobs:
                   site=button("SITE A",Color.rgb(28,37,33),ORANGE);
                   top.addView(site,new LinearLayout.LayoutParams(dp(78),dp(46)));
                   root.addView(top);
+                  android.widget.ImageView visual=new android.widget.ImageView(this);
+                  visual.setImageResource(R.drawable.bomb_sim_bg);
+                  visual.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+                  visual.setAdjustViewBounds(false);
+                  visual.setContentDescription("Visual do simulador");
+                  LinearLayout.LayoutParams vip=new LinearLayout.LayoutParams(-1,dp(220)); vip.topMargin=dp(10); root.addView(visual,vip);
 
                   panel=new LinearLayout(this); panel.setOrientation(LinearLayout.VERTICAL); panel.setPadding(dp(14),dp(14),dp(14),dp(14)); panel.setBackground(box(PANEL,LINE,18));
                   LinearLayout.LayoutParams pp=new LinearLayout.LayoutParams(-1,-2); pp.topMargin=dp(12); root.addView(panel,pp);
@@ -410,16 +416,16 @@ jobs:
           s=p.read_text()
           s=s.replace(
               'root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setPadding(dp(14),dp(14),dp(14),dp(20));',
-              'root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setPadding(dp(14),dp(14),dp(14),dp(20)); root.setBackgroundResource(R.drawable.bomb_sim_bg); root.getBackground().setAlpha(235);'
+              'root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setPadding(dp(14),dp(14),dp(14),dp(20));'
           )
           s=s.replace(
               'panel.setBackground(box(PANEL,LINE,18));',
-              'panel.setBackground(box(Color.argb(150,23,32,29),LINE,18));',
+              'panel.setBackground(box(PANEL,LINE,18));',
               1
           )
           s=s.replace(
               'Button b=button(s,Color.rgb(46,56,52),TEXT);',
-              'Button b=button(s,Color.argb(125,46,56,52),TEXT);'
+              'Button b=button(s,Color.rgb(46,56,52),TEXT);'
           )
           s=s.replace(
               'TextView foot=text("Simulador para partidas entre amigos • sem função de dispositivo real",10,MUTED,false);',
@@ -437,11 +443,11 @@ jobs:
         run: gradle -p BombGame_Android assembleDebug --stacktrace
 
       - name: Prepare APK
-        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame-Tactical-v4.apk
+        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame-Tactical-v4-1.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: BombGame-Tactical-v4
-          path: BombGame-Tactical-v4.apk
+          name: BombGame-Tactical-v4-1
+          path: BombGame-Tactical-v4-1.apk
           if-no-files-found: error
