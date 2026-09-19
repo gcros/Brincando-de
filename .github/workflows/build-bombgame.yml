@@ -403,7 +403,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p BombGame_Android/app/src/main/res/drawable-nodpi
-          base64 -d .bombgame_v4/bg.b64 > BombGame_Android/app/src/main/res/drawable-nodpi/bomb_sim_bg.jpg
+          cat .bombgame_v4/bgA.b64 .bombgame_v4/bgB.b64 .bombgame_v4/bgC.b64 | base64 -d > BombGame_Android/app/src/main/res/drawable-nodpi/bomb_sim_bg.jpg
           python3 - <<'PY'
           from pathlib import Path
           p=Path("BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java")
