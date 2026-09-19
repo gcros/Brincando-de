@@ -41,13 +41,306 @@ jobs:
           unzip -q /tmp/BombGame_Android.zip -d .
           test -f BombGame_Android/app/src/main/AndroidManifest.xml
 
-      - name: Remove AndroidX dependency
+      - name: Apply Tactical v2 UI and app cover
         shell: bash
         run: |
           sed -i "/androidx.appcompat:appcompat/d" BombGame_Android/app/build.gradle
-          sed -i 's/import androidx.appcompat.app.AppCompatActivity;/import android.app.Activity;/' BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java
-          sed -i 's/extends AppCompatActivity/extends Activity/' BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java
-          sed -i 's#parent="Theme.AppCompat.DayNight.NoActionBar"#parent="@android:style/Theme.Material.NoActionBar"#' BombGame_Android/app/src/main/res/values/themes.xml
+          mkdir -p BombGame_Android/app/src/main/res/drawable
+          mkdir -p BombGame_Android/app/src/main/res/mipmap-anydpi
+          mkdir -p BombGame_Android/app/src/main/res/mipmap-anydpi-v26
+          mkdir -p BombGame_Android/app/src/main/res/values-v31
+
+          cat > BombGame_Android/app/src/main/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.VIBRATE" />
+              <application
+                  android:allowBackup="true"
+                  android:label="Bomb Game"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher_round"
+                  android:theme="@style/Theme.BombGame.Launch">
+                  <activity
+                      android:name=".MainActivity"
+                      android:screenOrientation="portrait"
+                      android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          cat > BombGame_Android/app/src/main/res/values/themes.xml <<'EOF'
+          <resources>
+              <style name="Theme.BombGame" parent="@android:style/Theme.Material.NoActionBar">
+                  <item name="android:fontFamily">sans</item>
+                  <item name="android:windowLightStatusBar">false</item>
+                  <item name="android:statusBarColor">#0A0D0C</item>
+                  <item name="android:navigationBarColor">#0A0D0C</item>
+                  <item name="android:colorAccent">#F5A623</item>
+              </style>
+              <style name="Theme.BombGame.Launch" parent="@android:style/Theme.Material.NoActionBar">
+                  <item name="android:windowBackground">@drawable/splash_screen</item>
+                  <item name="android:statusBarColor">#0A0D0C</item>
+                  <item name="android:navigationBarColor">#0A0D0C</item>
+              </style>
+          </resources>
+          EOF
+
+          cat > BombGame_Android/app/src/main/res/values-v31/themes.xml <<'EOF'
+          <resources>
+              <style name="Theme.BombGame.Launch" parent="@android:style/Theme.Material.NoActionBar">
+                  <item name="android:windowSplashScreenBackground">#0A0D0C</item>
+                  <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+                  <item name="android:windowSplashScreenIconBackgroundColor">#101613</item>
+                  <item name="android:postSplashScreenTheme">@style/Theme.BombGame</item>
+                  <item name="android:statusBarColor">#0A0D0C</item>
+                  <item name="android:navigationBarColor">#0A0D0C</item>
+              </style>
+          </resources>
+          EOF
+
+          cat > BombGame_Android/app/src/main/res/drawable/ic_launcher_foreground.xml <<'EOF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="108dp" android:height="108dp"
+              android:viewportWidth="108" android:viewportHeight="108">
+              <path android:fillColor="#202A26" android:pathData="M24,18 h60 a8,8 0,0 1,8 8 v56 a8,8 0,0 1,-8 8 h-60 a8,8 0,0 1,-8 -8 v-56 a8,8 0,0 1,8 -8z"/>
+              <path android:fillColor="#F5A623" android:pathData="M31,27 h46 v18 h-46z"/>
+              <path android:fillColor="#050706" android:pathData="M35,31 h38 v10 h-38z"/>
+              <path android:fillColor="#FF4A3D" android:pathData="M39,34 h6 v4 h-6z M49,34 h6 v4 h-6z M59,34 h6 v4 h-6z"/>
+              <path android:fillColor="#4A5751" android:pathData="M30,52 h14 v10 h-14z M47,52 h14 v10 h-14z M64,52 h14 v10 h-14z M30,65 h14 v10 h-14z M47,65 h14 v10 h-14z M64,65 h14 v10 h-14z"/>
+              <path android:fillColor="#43D17D" android:pathData="M30,78 h14 v6 h-14z"/>
+              <path android:fillColor="#F5A623" android:pathData="M47,78 h31 v6 h-31z"/>
+          </vector>
+          EOF
+
+          cat > BombGame_Android/app/src/main/res/mipmap-anydpi/ic_launcher.xml <<'EOF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="108dp" android:height="108dp"
+              android:viewportWidth="108" android:viewportHeight="108">
+              <path android:fillColor="#101613" android:pathData="M0,0 h108 v108 h-108z"/>
+              <path android:fillColor="#202A26" android:pathData="M24,18 h60 a8,8 0,0 1,8 8 v56 a8,8 0,0 1,-8 8 h-60 a8,8 0,0 1,-8 -8 v-56 a8,8 0,0 1,8 -8z"/>
+              <path android:fillColor="#F5A623" android:pathData="M31,27 h46 v18 h-46z"/>
+              <path android:fillColor="#050706" android:pathData="M35,31 h38 v10 h-38z"/>
+              <path android:fillColor="#FF4A3D" android:pathData="M39,34 h6 v4 h-6z M49,34 h6 v4 h-6z M59,34 h6 v4 h-6z"/>
+              <path android:fillColor="#4A5751" android:pathData="M30,52 h14 v10 h-14z M47,52 h14 v10 h-14z M64,52 h14 v10 h-14z M30,65 h14 v10 h-14z M47,65 h14 v10 h-14z M64,65 h14 v10 h-14z"/>
+              <path android:fillColor="#43D17D" android:pathData="M30,78 h14 v6 h-14z"/>
+              <path android:fillColor="#F5A623" android:pathData="M47,78 h31 v6 h-31z"/>
+          </vector>
+          EOF
+          cp BombGame_Android/app/src/main/res/mipmap-anydpi/ic_launcher.xml BombGame_Android/app/src/main/res/mipmap-anydpi/ic_launcher_round.xml
+
+          cat > BombGame_Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="#101613"/>
+              <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+          </adaptive-icon>
+          EOF
+          cp BombGame_Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml BombGame_Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+
+          cat > BombGame_Android/app/src/main/res/drawable/splash_screen.xml <<'EOF'
+          <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+              <item android:drawable="#0A0D0C"/>
+              <item android:gravity="center" android:width="180dp" android:height="180dp" android:drawable="@mipmap/ic_launcher"/>
+          </layer-list>
+          EOF
+
+          cat > BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java <<'EOF'
+          package com.fanhouse.bombgame;
+
+          import android.app.Activity;
+          import android.graphics.Color;
+          import android.graphics.Typeface;
+          import android.graphics.drawable.GradientDrawable;
+          import android.media.AudioManager;
+          import android.media.ToneGenerator;
+          import android.os.Bundle;
+          import android.os.CountDownTimer;
+          import android.os.Handler;
+          import android.os.Looper;
+          import android.os.VibrationEffect;
+          import android.os.Vibrator;
+          import android.view.Gravity;
+          import android.view.MotionEvent;
+          import android.view.View;
+          import android.widget.Button;
+          import android.widget.CheckBox;
+          import android.widget.LinearLayout;
+          import android.widget.ProgressBar;
+          import android.widget.ScrollView;
+          import android.widget.TextView;
+          import java.util.Locale;
+
+          public class MainActivity extends Activity {
+              private final Handler h = new Handler(Looper.getMainLooper());
+              private ToneGenerator tone;
+              private Vibrator vib;
+              private CountDownTimer bombTimer;
+              private LinearLayout root, panel, keypad, defuseBox;
+              private TextView timer, codeView, status, score, defuseInfo;
+              private Button arm, defuse, site, time;
+              private ProgressBar progress;
+              private CheckBox kit;
+              private final StringBuilder code = new StringBuilder();
+              private long roundMs = 40000, defuseStart;
+              private boolean planted=false, defusing=false, siteA=true;
+              private int atk=0, def=0;
+
+              private final int BG=Color.rgb(10,13,12), PANEL=Color.rgb(23,32,29), LINE=Color.rgb(60,74,68);
+              private final int TEXT=Color.rgb(240,243,241), MUTED=Color.rgb(145,160,153), ORANGE=Color.rgb(245,166,35);
+              private final int RED=Color.rgb(255,74,61), GREEN=Color.rgb(67,209,125);
+
+              @Override protected void onCreate(Bundle b) {
+                  setTheme(R.style.Theme_BombGame);
+                  super.onCreate(b);
+                  tone = new ToneGenerator(AudioManager.STREAM_MUSIC, 95);
+                  vib = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+                  buildUi();
+                  newRound();
+              }
+
+              private int dp(int v){ return Math.round(v*getResources().getDisplayMetrics().density); }
+
+              private GradientDrawable box(int color,int stroke,int radius){
+                  GradientDrawable g=new GradientDrawable();
+                  g.setColor(color); g.setCornerRadius(dp(radius));
+                  if(stroke!=0) g.setStroke(dp(1),stroke);
+                  return g;
+              }
+
+              private TextView text(String s,int sp,int color,boolean bold){
+                  TextView t=new TextView(this);
+                  t.setText(s); t.setTextSize(sp); t.setTextColor(color);
+                  if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+                  return t;
+              }
+
+              private Button button(String s,int bg,int fg){
+                  Button b=new Button(this);
+                  b.setText(s); b.setTextColor(fg); b.setTextSize(15);
+                  b.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+                  b.setAllCaps(false);
+                  b.setBackground(box(bg,LINE,10));
+                  b.setPadding(dp(8),0,dp(8),0);
+                  return b;
+              }
+
+              private void buildUi(){
+                  ScrollView sc=new ScrollView(this); sc.setBackgroundColor(BG); sc.setFillViewport(true);
+                  root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setPadding(dp(14),dp(14),dp(14),dp(20));
+                  sc.addView(root,new ScrollView.LayoutParams(-1,-2)); setContentView(sc);
+
+                  LinearLayout top=new LinearLayout(this); top.setGravity(Gravity.CENTER_VERTICAL);
+                  LinearLayout names=new LinearLayout(this); names.setOrientation(LinearLayout.VERTICAL);
+                  TextView title=text("TACTICAL DEVICE",22,TEXT,true);
+                  TextView sub=text("OBJECTIVE SIMULATOR",10,MUTED,false); sub.setLetterSpacing(.15f);
+                  names.addView(title); names.addView(sub);
+                  top.addView(names,new LinearLayout.LayoutParams(0,-2,1));
+                  site=button("SITE A",Color.rgb(28,37,33),ORANGE);
+                  top.addView(site,new LinearLayout.LayoutParams(dp(78),dp(46)));
+                  root.addView(top);
+
+                  panel=new LinearLayout(this); panel.setOrientation(LinearLayout.VERTICAL); panel.setPadding(dp(14),dp(14),dp(14),dp(14)); panel.setBackground(box(PANEL,LINE,18));
+                  LinearLayout.LayoutParams pp=new LinearLayout.LayoutParams(-1,-2); pp.topMargin=dp(12); root.addView(panel,pp);
+
+                  status=text("AGUARDANDO CÓDIGO",14,ORANGE,true); status.setGravity(Gravity.CENTER); panel.addView(status);
+
+                  LinearLayout display=new LinearLayout(this); display.setOrientation(LinearLayout.VERTICAL); display.setPadding(dp(10),dp(10),dp(10),dp(10)); display.setBackground(box(Color.rgb(4,6,6),Color.rgb(59,36,34),10));
+                  LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(-1,-2); dlp.topMargin=dp(10); panel.addView(display,dlp);
+                  timer=text("00:40.0",52,RED,true); timer.setTypeface(Typeface.MONOSPACE,Typeface.BOLD); timer.setGravity(Gravity.CENTER); display.addView(timer);
+                  codeView=text("_ _ _ _ _ _ _",22,ORANGE,true); codeView.setTypeface(Typeface.MONOSPACE,Typeface.BOLD); codeView.setGravity(Gravity.CENTER); display.addView(codeView);
+
+                  keypad=new LinearLayout(this); keypad.setOrientation(LinearLayout.VERTICAL);
+                  LinearLayout.LayoutParams klp=new LinearLayout.LayoutParams(-1,-2); klp.topMargin=dp(10); panel.addView(keypad,klp);
+                  addKeyRow("1","2","3"); addKeyRow("4","5","6"); addKeyRow("7","8","9"); addKeyRow("CLR","0","⌫");
+
+                  arm=button("ARMAR / PLANTAR",ORANGE,Color.rgb(20,14,5));
+                  arm.setTextSize(18); arm.setEnabled(false);
+                  LinearLayout.LayoutParams alp=new LinearLayout.LayoutParams(-1,dp(58)); alp.topMargin=dp(10); panel.addView(arm,alp);
+
+                  defuseBox=new LinearLayout(this); defuseBox.setOrientation(LinearLayout.VERTICAL); defuseBox.setVisibility(View.GONE);
+                  LinearLayout.LayoutParams dbp=new LinearLayout.LayoutParams(-1,-2); dbp.topMargin=dp(12); panel.addView(defuseBox,dbp);
+                  progress=new ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal); progress.setMax(1000); progress.setProgressTintList(android.content.res.ColorStateList.valueOf(GREEN));
+                  defuseBox.addView(progress,new LinearLayout.LayoutParams(-1,dp(12)));
+                  defuseInfo=text("Segure o botão até completar",12,MUTED,false); defuseInfo.setGravity(Gravity.CENTER); defuseBox.addView(defuseInfo);
+                  defuse=button("SEGURE PARA DESARMAR",GREEN,Color.rgb(7,19,12)); defuse.setTextSize(17);
+                  LinearLayout.LayoutParams dfp=new LinearLayout.LayoutParams(-1,dp(70)); dfp.topMargin=dp(8); defuseBox.addView(defuse,dfp);
+
+                  LinearLayout opts=new LinearLayout(this); opts.setGravity(Gravity.CENTER_VERTICAL);
+                  kit=new CheckBox(this); kit.setText("Kit de desarme (5 s)"); kit.setTextColor(TEXT); kit.setButtonTintList(android.content.res.ColorStateList.valueOf(ORANGE));
+                  opts.addView(kit,new LinearLayout.LayoutParams(0,-2,1));
+                  time=button("40 SEG",Color.rgb(28,37,33),TEXT); opts.addView(time,new LinearLayout.LayoutParams(dp(92),dp(44)));
+                  LinearLayout.LayoutParams olp=new LinearLayout.LayoutParams(-1,-2); olp.topMargin=dp(8); root.addView(opts,olp);
+
+                  score=text("ATACANTES  0   ×   0  DEFENSORES",16,TEXT,true); score.setGravity(Gravity.CENTER);
+                  LinearLayout.LayoutParams slp=new LinearLayout.LayoutParams(-1,-2); slp.topMargin=dp(12); root.addView(score,slp);
+
+                  LinearLayout actions=new LinearLayout(this);
+                  Button reset=button("NOVA RODADA",Color.rgb(28,37,33),TEXT);
+                  Button zero=button("ZERAR PLACAR",Color.rgb(28,37,33),TEXT);
+                  LinearLayout.LayoutParams a1=new LinearLayout.LayoutParams(0,dp(48),1); a1.rightMargin=dp(4);
+                  LinearLayout.LayoutParams a2=new LinearLayout.LayoutParams(0,dp(48),1); a2.leftMargin=dp(4);
+                  actions.addView(reset,a1); actions.addView(zero,a2);
+                  LinearLayout.LayoutParams acp=new LinearLayout.LayoutParams(-1,-2); acp.topMargin=dp(8); root.addView(actions,acp);
+
+                  TextView foot=text("Simulador para partidas entre amigos • sem função de dispositivo real",10,MUTED,false); foot.setGravity(Gravity.CENTER);
+                  LinearLayout.LayoutParams flp=new LinearLayout.LayoutParams(-1,-2); flp.topMargin=dp(12); root.addView(foot,flp);
+
+                  arm.setOnClickListener(v->arm());
+                  site.setOnClickListener(v->{ if(!planted){siteA=!siteA;site.setText(siteA?"SITE A":"SITE B");site.setTextColor(siteA?ORANGE:GREEN);beep(40);} });
+                  time.setOnClickListener(v->{ if(!planted){roundMs=roundMs==40000?45000:roundMs==45000?30000:40000;time.setText((roundMs/1000)+" SEG");updateTimer(roundMs);beep(40);} });
+                  reset.setOnClickListener(v->newRound());
+                  zero.setOnClickListener(v->{atk=0;def=0;updateScore();beep(50);});
+                  defuse.setOnTouchListener((v,e)->{ if(!planted)return true; if(e.getAction()==MotionEvent.ACTION_DOWN)startDefuse(); if(e.getAction()==MotionEvent.ACTION_UP||e.getAction()==MotionEvent.ACTION_CANCEL)cancelDefuse(); return true; });
+              }
+
+              private void addKeyRow(String a,String b,String c){
+                  LinearLayout row=new LinearLayout(this);
+                  addKey(row,a); addKey(row,b); addKey(row,c);
+                  LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(-1,dp(54)); rp.topMargin=dp(4); keypad.addView(row,rp);
+              }
+
+              private void addKey(LinearLayout row,String s){
+                  Button b=button(s,Color.rgb(46,56,52),TEXT); b.setTextSize(s.equals("CLR")?13:19);
+                  LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-1,1); lp.leftMargin=dp(2); lp.rightMargin=dp(2); row.addView(b,lp);
+                  b.setOnClickListener(v->{ if(s.equals("CLR"))clearCode(); else if(s.equals("⌫"))backspace(); else digit(s); });
+              }
+
+              private void digit(String s){
+                  if(planted||code.length()>=7)return; code.append(s); updateCode(); beep(30); vibrate(15);
+                  if(code.length()==7){arm.setEnabled(true);status.setText("CÓDIGO ACEITO • PRONTO PARA PLANTAR");}
+              }
+              private void clearCode(){ if(planted)return;code.setLength(0);updateCode();arm.setEnabled(false);status.setText("AGUARDANDO CÓDIGO");beep(35); }
+              private void backspace(){ if(planted||code.length()==0)return;code.deleteCharAt(code.length()-1);updateCode();arm.setEnabled(code.length()==7);status.setText(code.length()==7?"CÓDIGO ACEITO • PRONTO PARA PLANTAR":"AGUARDANDO CÓDIGO"); }
+              private void updateCode(){StringBuilder x=new StringBuilder();for(int i=0;i<7;i++){x.append(i<code.length()?code.charAt(i):'_');if(i<6)x.append(' ');}codeView.setText(x.toString());}
+
+              private void arm(){
+                  if(planted||code.length()!=7)return; planted=true; status.setText("OBJETIVO PLANTADO • "+(siteA?"SITE A":"SITE B"));
+                  keypad.setVisibility(View.GONE); arm.setVisibility(View.GONE); defuseBox.setVisibility(View.VISIBLE); kit.setEnabled(false);time.setEnabled(false);site.setEnabled(false);
+                  codeView.setText("ARMED "+code); beep(200);vibrate(140);
+                  bombTimer=new CountDownTimer(roundMs,100){
+                      long last=-9999;
+                      public void onTick(long ms){updateTimer(ms);long elapsed=roundMs-ms,interval=ms<=3000?160:ms<=7000?280:ms<=15000?520:ms<=25000?780:1000;if(elapsed-last>=interval){last=elapsed;beep(ms<5000?75:50);vibrate(ms<5000?40:18);} if(ms<=5000)panel.setBackground(box(((ms/250)%2)==0?Color.rgb(43,11,9):PANEL,LINE,18));}
+                      public void onFinish(){updateTimer(0);timeout();}
+                  }.start();
+              }
+
+              private void startDefuse(){if(!planted||defusing)return;defusing=true;defuseStart=System.currentTimeMillis();progress.setProgress(0);status.setText("DESARME EM ANDAMENTO");h.post(defuseTick);}
+              private final Runnable defuseTick=new Runnable(){public void run(){if(!planted||!defusing)return;long need=kit.isChecked()?5000:10000,el=System.currentTimeMillis()-defuseStart;progress.setProgress((int)Math.min(1000,el*1000/need));defuseInfo.setText(String.format(Locale.US,"DESARMANDO  %.1f s",Math.max(0,(need-el)/1000f)));if(el>=need)finishDefuse();else h.postDelayed(this,33);}};
+              private void cancelDefuse(){if(!defusing)return;defusing=false;h.removeCallbacks(defuseTick);progress.setProgress(0);defuseInfo.setText("Desarme interrompido • segure novamente");if(planted)status.setText("OBJETIVO PLANTADO • "+(siteA?"SITE A":"SITE B"));}
+              private void finishDefuse(){defusing=false;planted=false;h.removeCallbacks(defuseTick);if(bombTimer!=null)bombTimer.cancel();panel.setBackground(box(PANEL,LINE,18));progress.setProgress(1000);defuseInfo.setText("DESARME CONCLUÍDO");status.setText("DEFENSORES VENCERAM");defuse.setEnabled(false);def++;updateScore();beep(600);vibrate(300);}
+              private void timeout(){planted=false;defusing=false;h.removeCallbacks(defuseTick);panel.setBackground(box(Color.rgb(53,16,13),LINE,18));defuse.setEnabled(false);defuseInfo.setText("TEMPO ESGOTADO");status.setText("ATACANTES VENCERAM");atk++;updateScore();for(int i=0;i<5;i++){int d=i*130;h.postDelayed(()->{beep(90);vibrate(60);},d);}}
+
+              private void newRound(){if(bombTimer!=null)bombTimer.cancel();h.removeCallbacks(defuseTick);planted=false;defusing=false;code.setLength(0);updateCode();updateTimer(roundMs);status.setText("AGUARDANDO CÓDIGO");keypad.setVisibility(View.VISIBLE);arm.setVisibility(View.VISIBLE);arm.setEnabled(false);defuseBox.setVisibility(View.GONE);defuse.setEnabled(true);progress.setProgress(0);kit.setEnabled(true);time.setEnabled(true);site.setEnabled(true);panel.setBackground(box(PANEL,LINE,18));}
+              private void updateTimer(long ms){long s=ms/1000;timer.setText(String.format(Locale.US,"%02d:%02d.%d",s/60,s%60,(ms%1000)/100));}
+              private void updateScore(){score.setText("ATACANTES  "+atk+"   ×   "+def+"  DEFENSORES");}
+              private void beep(int ms){try{tone.startTone(ToneGenerator.TONE_PROP_BEEP,ms);}catch(Exception ignored){}}
+              private void vibrate(long ms){try{if(android.os.Build.VERSION.SDK_INT>=26)vib.vibrate(VibrationEffect.createOneShot(ms,VibrationEffect.DEFAULT_AMPLITUDE));else vib.vibrate(ms);}catch(Exception ignored){}}
+              @Override protected void onDestroy(){super.onDestroy();if(bombTimer!=null)bombTimer.cancel();h.removeCallbacksAndMessages(null);if(tone!=null)tone.release();}
+          }
+          EOF
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -58,11 +351,11 @@ jobs:
         run: gradle -p BombGame_Android assembleDebug --stacktrace
 
       - name: Prepare APK
-        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame.apk
+        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame-Tactical-v2.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: BombGame-APK
-          path: BombGame.apk
+          name: BombGame-Tactical-v2
+          path: BombGame-Tactical-v2.apk
           if-no-files-found: error
