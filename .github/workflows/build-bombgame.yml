@@ -1,0 +1,58 @@
+name: Build BombGame APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.bombgame_bundle/**'
+      - '.github/workflows/build-bombgame.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 35
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Rebuild Android project
+        run: |
+          base64 -d .bombgame_bundle/project.zip.b64 > /tmp/BombGame_Android.zip
+          unzip -q /tmp/BombGame_Android.zip -d .
+          test -f BombGame_Android/app/src/main/AndroidManifest.xml
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build debug APK
+        run: gradle -p BombGame_Android assembleDebug --stacktrace
+
+      - name: Prepare APK
+        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BombGame-APK
+          path: BombGame.apk
+          if-no-files-found: error
