@@ -133,7 +133,7 @@ jobs:
 
           cat > BombGame_Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
           <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-              <background android:drawable="#101613"/>
+              <background android:drawable="@color/bg"/>
               <foreground android:drawable="@drawable/ic_launcher_foreground"/>
           </adaptive-icon>
           EOF
@@ -141,7 +141,7 @@ jobs:
 
           cat > BombGame_Android/app/src/main/res/drawable/splash_screen.xml <<'EOF'
           <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-              <item android:drawable="#0A0D0C"/>
+              <item android:drawable="@color/bg"/>
               <item android:gravity="center" android:width="180dp" android:height="180dp" android:drawable="@mipmap/ic_launcher"/>
           </layer-list>
           EOF
