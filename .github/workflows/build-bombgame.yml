@@ -349,7 +349,7 @@ jobs:
           p=Path("BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java")
           s=p.read_text()
 
-          needle='''                  score=text("ATACANTES  0   ×   0  DEFENSORES",16,TEXT,true);'''
+          needle='''score=text("ATACANTES  0   ×   0  DEFENSORES",16,TEXT,true);'''
           insert='''                  LinearLayout decor=new LinearLayout(this); decor.setOrientation(LinearLayout.VERTICAL); decor.setPadding(dp(12),dp(12),dp(12),dp(12)); decor.setBackground(box(Color.rgb(18,25,22),LINE,18)); decor.setMinimumHeight(dp(250));
                   LinearLayout.LayoutParams decp=new LinearLayout.LayoutParams(-1,-2); decp.topMargin=dp(10); root.addView(decor,decp);
 
@@ -388,9 +388,12 @@ jobs:
                   LinearLayout.LayoutParams wlp=new LinearLayout.LayoutParams(-1,dp(48)); wlp.topMargin=dp(8); decor.addView(wires,wlp);
 
                   score=text("ATACANTES  0   ×   0  DEFENSORES",16,TEXT,true);'''
-          if needle not in s:
+          idx=s.find(needle)
+          if idx < 0:
               raise SystemExit("Could not find score insertion point")
-          s=s.replace(needle,insert,1)
+          line_start=s.rfind("\n",0,idx)+1
+          indent=s[line_start:idx]
+          s=s[:idx] + insert.replace("\n","\n"+indent) + s[idx+len(needle):]
           s=s.replace('private void beep(int ms){try{tone.startTone(ToneGenerator.TONE_PROP_BEEP,ms);}', 'private void beep(int ms){try{tone.startTone(ms>=500?ToneGenerator.TONE_PROP_ACK:(ms>=80?ToneGenerator.TONE_PROP_BEEP2:ToneGenerator.TONE_PROP_BEEP),ms);}')
           p.write_text(s)
           PY
