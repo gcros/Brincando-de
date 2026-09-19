@@ -95,7 +95,6 @@ jobs:
                   <item name="android:windowSplashScreenBackground">#0A0D0C</item>
                   <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
                   <item name="android:windowSplashScreenIconBackgroundColor">#101613</item>
-                  <item name="android:postSplashScreenTheme">@style/Theme.BombGame</item>
                   <item name="android:statusBarColor">#0A0D0C</item>
                   <item name="android:navigationBarColor">#0A0D0C</item>
               </style>
