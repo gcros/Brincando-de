@@ -341,6 +341,60 @@ jobs:
           }
           EOF
 
+      - name: Apply Tactical v3 bottom panel
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java")
+          s=p.read_text()
+
+          needle='''                  score=text("ATACANTES  0   ×   0  DEFENSORES",16,TEXT,true);'''
+          insert='''                  LinearLayout decor=new LinearLayout(this); decor.setOrientation(LinearLayout.VERTICAL); decor.setPadding(dp(12),dp(12),dp(12),dp(12)); decor.setBackground(box(Color.rgb(18,25,22),LINE,18)); decor.setMinimumHeight(dp(250));
+                  LinearLayout.LayoutParams decp=new LinearLayout.LayoutParams(-1,-2); decp.topMargin=dp(10); root.addView(decor,decp);
+
+                  TextView dtitle=text("PAINEL TÁTICO",13,ORANGE,true); decor.addView(dtitle);
+
+                  LinearLayout drow1=new LinearLayout(this);
+                  TextView dgain=text("🎛️\\nGAIN",17,TEXT,true); dgain.setGravity(Gravity.CENTER); dgain.setBackground(box(Color.rgb(28,37,33),LINE,12));
+                  TextView dlink=text("🪢\\nLINK",17,TEXT,true); dlink.setGravity(Gravity.CENTER); dlink.setBackground(box(Color.rgb(28,37,33),LINE,12));
+                  TextView dpower=text("🔌\\nPOWER",17,TEXT,true); dpower.setGravity(Gravity.CENTER); dpower.setBackground(box(Color.rgb(28,37,33),LINE,12));
+                  LinearLayout.LayoutParams dr1=new LinearLayout.LayoutParams(0,dp(76),1); dr1.rightMargin=dp(4);
+                  LinearLayout.LayoutParams dr2=new LinearLayout.LayoutParams(0,dp(76),1); dr2.leftMargin=dp(4); dr2.rightMargin=dp(4);
+                  LinearLayout.LayoutParams dr3=new LinearLayout.LayoutParams(0,dp(76),1); dr3.leftMargin=dp(4);
+                  drow1.addView(dgain,dr1); drow1.addView(dlink,dr2); drow1.addView(dpower,dr3);
+                  LinearLayout.LayoutParams d1lp=new LinearLayout.LayoutParams(-1,-2); d1lp.topMargin=dp(10); decor.addView(drow1,d1lp);
+
+                  LinearLayout drow2=new LinearLayout(this);
+                  TextView dsafe=text("SAFE",14,GREEN,true); dsafe.setGravity(Gravity.CENTER); dsafe.setBackground(box(Color.rgb(28,37,33),LINE,10));
+                  TextView darmed=text("ARMED",14,ORANGE,true); darmed.setGravity(Gravity.CENTER); darmed.setBackground(box(Color.rgb(28,37,33),LINE,10));
+                  TextView dbypass=text("BYPASS",14,TEXT,true); dbypass.setGravity(Gravity.CENTER); dbypass.setBackground(box(Color.rgb(28,37,33),LINE,10));
+                  LinearLayout.LayoutParams ds1=new LinearLayout.LayoutParams(0,dp(48),1); ds1.rightMargin=dp(4);
+                  LinearLayout.LayoutParams ds2=new LinearLayout.LayoutParams(0,dp(48),1); ds2.leftMargin=dp(4); ds2.rightMargin=dp(4);
+                  LinearLayout.LayoutParams ds3=new LinearLayout.LayoutParams(0,dp(48),1); ds3.leftMargin=dp(4);
+                  drow2.addView(dsafe,ds1); drow2.addView(darmed,ds2); drow2.addView(dbypass,ds3);
+                  LinearLayout.LayoutParams d2lp=new LinearLayout.LayoutParams(-1,-2); d2lp.topMargin=dp(10); decor.addView(drow2,d2lp);
+
+                  LinearLayout leds=new LinearLayout(this); leds.setGravity(Gravity.CENTER);
+                  TextView lp=text("● POWER",12,GREEN,true); lp.setGravity(Gravity.CENTER);
+                  TextView ls=text("● SIGNAL",12,ORANGE,true); ls.setGravity(Gravity.CENTER);
+                  TextView ll=text("● LOCK",12,RED,true); ll.setGravity(Gravity.CENTER);
+                  leds.addView(lp,new LinearLayout.LayoutParams(0,dp(38),1));
+                  leds.addView(ls,new LinearLayout.LayoutParams(0,dp(38),1));
+                  leds.addView(ll,new LinearLayout.LayoutParams(0,dp(38),1));
+                  LinearLayout.LayoutParams ledlp=new LinearLayout.LayoutParams(-1,-2); ledlp.topMargin=dp(8); decor.addView(leds,ledlp);
+
+                  TextView wires=text("🪢  WIRE A1      🪢  WIRE B7      🎛️  AUX",14,MUTED,true); wires.setGravity(Gravity.CENTER); wires.setBackground(box(Color.rgb(13,18,16),LINE,10));
+                  LinearLayout.LayoutParams wlp=new LinearLayout.LayoutParams(-1,dp(48)); wlp.topMargin=dp(8); decor.addView(wires,wlp);
+
+                  score=text("ATACANTES  0   ×   0  DEFENSORES",16,TEXT,true);'''
+          if needle not in s:
+              raise SystemExit("Could not find score insertion point")
+          s=s.replace(needle,insert,1)
+          s=s.replace('private void beep(int ms){try{tone.startTone(ToneGenerator.TONE_PROP_BEEP,ms);}', 'private void beep(int ms){try{tone.startTone(ms>=500?ToneGenerator.TONE_PROP_ACK:(ms>=80?ToneGenerator.TONE_PROP_BEEP2:ToneGenerator.TONE_PROP_BEEP),ms);}')
+          p.write_text(s)
+          PY
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -350,11 +404,11 @@ jobs:
         run: gradle -p BombGame_Android assembleDebug --stacktrace
 
       - name: Prepare APK
-        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame-Tactical-v2.apk
+        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame-Tactical-v3.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: BombGame-Tactical-v2
-          path: BombGame-Tactical-v2.apk
+          name: BombGame-Tactical-v3
+          path: BombGame-Tactical-v3.apk
           if-no-files-found: error
