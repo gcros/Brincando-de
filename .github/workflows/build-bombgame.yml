@@ -28,12 +28,10 @@ jobs:
       - name: Install Android 35
         shell: bash
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
           if [ ! -x "$SDKMANAGER" ]; then
             SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort | tail -n 1)"
           fi
-          echo "Using $SDKMANAGER"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
@@ -42,6 +40,14 @@ jobs:
           base64 -d .bombgame_bundle/project.zip.b64 > /tmp/BombGame_Android.zip
           unzip -q /tmp/BombGame_Android.zip -d .
           test -f BombGame_Android/app/src/main/AndroidManifest.xml
+
+      - name: Remove AndroidX dependency
+        shell: bash
+        run: |
+          sed -i "/androidx.appcompat:appcompat/d" BombGame_Android/app/build.gradle
+          sed -i 's/import androidx.appcompat.app.AppCompatActivity;/import android.app.Activity;/' BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java
+          sed -i 's/extends AppCompatActivity/extends Activity/' BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java
+          sed -i 's#parent="Theme.AppCompat.DayNight.NoActionBar"#parent="@android:style/Theme.Material.NoActionBar"#' BombGame_Android/app/src/main/res/values/themes.xml
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
