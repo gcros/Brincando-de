@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.bombgame_bundle/**'
+      - '.bombgame_v4/**'
       - '.github/workflows/build-bombgame.yml'
   workflow_dispatch:
 
@@ -398,6 +399,35 @@ jobs:
           p.write_text(s)
           PY
 
+      - name: Apply Tactical v4 image background
+        shell: bash
+        run: |
+          mkdir -p BombGame_Android/app/src/main/res/drawable-nodpi
+          base64 -d .bombgame_v4/bg.b64 > BombGame_Android/app/src/main/res/drawable-nodpi/bomb_sim_bg.jpg
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("BombGame_Android/app/src/main/java/com/fanhouse/bombgame/MainActivity.java")
+          s=p.read_text()
+          s=s.replace(
+              'root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setPadding(dp(14),dp(14),dp(14),dp(20));',
+              'root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setPadding(dp(14),dp(14),dp(14),dp(20)); root.setBackgroundResource(R.drawable.bomb_sim_bg); root.getBackground().setAlpha(235);'
+          )
+          s=s.replace(
+              'panel.setBackground(box(PANEL,LINE,18));',
+              'panel.setBackground(box(Color.argb(150,23,32,29),LINE,18));',
+              1
+          )
+          s=s.replace(
+              'Button b=button(s,Color.rgb(46,56,52),TEXT);',
+              'Button b=button(s,Color.argb(125,46,56,52),TEXT);'
+          )
+          s=s.replace(
+              'TextView foot=text("Simulador para partidas entre amigos • sem função de dispositivo real",10,MUTED,false);',
+              'TextView foot=text("SIMULADOR FICTÍCIO PARA GAMES",10,TEXT,true);'
+          )
+          p.write_text(s)
+          PY
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -407,11 +437,11 @@ jobs:
         run: gradle -p BombGame_Android assembleDebug --stacktrace
 
       - name: Prepare APK
-        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame-Tactical-v3.apk
+        run: cp BombGame_Android/app/build/outputs/apk/debug/app-debug.apk BombGame-Tactical-v4.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: BombGame-Tactical-v3
-          path: BombGame-Tactical-v3.apk
+          name: BombGame-Tactical-v4
+          path: BombGame-Tactical-v4.apk
           if-no-files-found: error
